@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM Template for ACG October 2020 Challenge
+  Creating a recommendation engine using AWS SageMaker
+
+Globals:
+  Function:
+    Timeout: 900
+    Handler: app.lambda_handler
+    Runtime: python3.8
+
+Resources:
+  DataBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+
+  CreateTweetIdFilesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/split_tweet_ids/
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref DataBucket
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref DataBucket
+          TWEET_IDS_KEY: "tweet_ids.txt"
+
+  CreateBaseDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/create_dataset/
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref DataBucket
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref DataBucket
+          DATA_KEY: "political_tweets.csv"
+          USER_KEY: "congress_member_data.csv"
+
+Outputs:
+  DataBucket:
+    Description: "S3 Bucket Name Containing Data Files"
+    Value: !Ref DataBucket
+  CreateBaseDataFunction:
+    Description: "ARN for function that creates base data set"
+    Value: !GetAtt CreateBaseDataFunction.Arn
+  CreateTweetIdFilesFunction:
+    Description: "ARN for function that creates block tweet id files out of aggregate list"
+    Value: !GetAtt CreateTweetIdFilesFunction.Arn
