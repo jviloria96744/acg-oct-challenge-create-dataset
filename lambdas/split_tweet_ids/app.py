@@ -7,7 +7,7 @@ TWEET_IDS_KEY = os.environ["TWEET_IDS_KEY"]
 BUCKET_NAME = os.environ["BUCKET_NAME"]
 
 
-def close_and_upload_file(temp_file, temp_filename=None):
+def close_and_upload_file(temp_file, temp_filename):
     if temp_file:
         temp_file.close()
         s3.upload_file('/tmp/' + temp_filename, BUCKET_NAME, temp_filename)
@@ -16,6 +16,7 @@ def close_and_upload_file(temp_file, temp_filename=None):
 def split_tweet_list():
     lines_per_file = 30000
     temp_file = None
+    temp_filename = None
     filenames = []
 
     with open('/tmp/' + TWEET_IDS_KEY) as master_file:
