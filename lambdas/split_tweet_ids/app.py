@@ -10,7 +10,8 @@ BUCKET_NAME = os.environ["BUCKET_NAME"]
 def close_and_upload_file(temp_file, temp_filename):
     if temp_file:
         temp_file.close()
-        s3.upload_file('/tmp/' + temp_filename, BUCKET_NAME, temp_filename)
+        s3.upload_file('/tmp/' + temp_filename, BUCKET_NAME,
+                       f"tweet_ids/{temp_filename}")
 
 
 def split_tweet_list():
@@ -28,9 +29,9 @@ def split_tweet_list():
 
                 close_and_upload_file(temp_file, temp_filename)
 
-                temp_filename = f"tweet_ids/tweet_ids_{iteration}.txt"
-                filenames.append({"filename": temp_filename})
-                temp_file = open('/tmp/' + temp_filename, "w")
+                temp_filename = f"tweet_ids_{iteration}.txt"
+                filenames.append({"filename": f"tweet_ids/{temp_filename}"})
+                temp_file = open(f'/tmp/tweet_ids_{iteration}.txt', "w")
 
             temp_file.write(line)
 
