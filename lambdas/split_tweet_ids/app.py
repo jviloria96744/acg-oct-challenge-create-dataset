@@ -19,6 +19,7 @@ def split_tweet_list():
     filenames = []
 
     with open('/tmp/' + TWEET_IDS_KEY) as master_file:
+
         iteration = 0
         for line_num, line in enumerate(master_file):
             if line_num % lines_per_file == 0:
