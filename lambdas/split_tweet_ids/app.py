@@ -7,7 +7,7 @@ TWEET_IDS_KEY = os.environ["TWEET_IDS_KEY"]
 BUCKET_NAME = os.environ["BUCKET_NAME"]
 
 
-def close_and_upload_file(temp_file, temp_filename):
+def close_and_upload_file(temp_file, temp_filename=None):
     if temp_file:
         temp_file.close()
         s3.upload_file('/tmp/' + temp_filename, BUCKET_NAME, temp_filename)
